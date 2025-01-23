@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "yandex" {
-  zone = "ru-central1-d"
+  zone      = "ru-central1-d"
   folder_id = "b1ggegfk5mo7j1ck1p4o"
 }
 
@@ -40,8 +40,8 @@ resource "yandex_vpc_subnet" "subnet-1" {
 }
 
 resource "yandex_compute_instance" "vm-1" {
-  name = "terraform-1"
-  zone = "ru-central1-d"
+  name        = "terraform-1"
+  zone        = "ru-central1-d"
   platform_id = "standard-v2"
 
   resources {
