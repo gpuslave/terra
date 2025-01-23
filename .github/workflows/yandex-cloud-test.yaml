@@ -15,22 +15,25 @@ jobs:
           terraform_version: "1.10.4"
       
       - name: Terraform fmt
+        working-directory: modules/services/yandex-cloud
         id: fmt
         run: |
-          cd modules/services/yandex-cloud
-          terraform fmt -check
+          terraform fmt
         continue-on-error: true
 
       - name: Terrafrom init
+        working-directory: modules/services/yandex-cloud
         id: init
         run: |
-          pwd
           terraform init
 
       - name: Terraform validate
+        working-directory: modules/services/yandex-cloud
         id: validate
-        run: terraform validate
+        run: |
+          terraform validate
       
       - name: Terraform plan
+        working-directory: modules/services/yandex-cloud
         run: terraform plan
         continue-on-error: true
