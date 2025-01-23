@@ -16,12 +16,16 @@ jobs:
       
       - name: Terraform fmt
         id: fmt
-        run: terraform fmt -check
+        run: |
+          cd modules/services/yandex-cloud
+          terraform fmt -check
         continue-on-error: true
 
       - name: Terrafrom init
         id: init
-        run: terraform init
+        run: |
+          pwd
+          terraform init
 
       - name: Terraform validate
         id: validate
