@@ -1,9 +1,10 @@
-name: Terraform
+name: Terraform Plan
 
 on:
   push:
     branches:
       - githubflow
+      - main
   pull_request:
     branches:
       - main
@@ -89,7 +90,12 @@ jobs:
           echo "${{ steps.run.outputs.run_link }}"
           exit 1
       
-
+      - uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.3.2
+        id: apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          run: ${{ steps.run.outputs.run_id }}
+          comment: "Apply Run from GitHub Actions CI ${{ github.sha }}" 
 
       # - name: Terraform Setup
       #   uses: hashicorp/setup-terraform@v3
