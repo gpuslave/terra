@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  TF_CLOUD_ORG: "gpuslave_org"
+  TF_CLOUD_ORGANIZATION: "gpuslave_org"
   TF_API_TOKEN: "${{ secrets.TERRAFORM_API_KEY}} "
   TF_WORKSPACE: "gpuslave_workspace"
   CONFIG_DIRECTORY: "."
