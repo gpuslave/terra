@@ -96,33 +96,3 @@ jobs:
         with:
           run: ${{ steps.run.outputs.run_id }}
           comment: "Apply Run from GitHub Actions CI ${{ github.sha }}" 
-
-      # - name: Terraform Setup
-      #   uses: hashicorp/setup-terraform@v3
-      #   with:
-      #     terraform_version: "1.10.4"
-      #     cli_config_credentials_token: "${{ env.TF_API_TOKEN }}"
-      
-      # - name: Terraform Format
-      #   working-directory: modules/services/yandex-cloud
-      #   id: fmt
-      #   run: |
-      #     terraform fmt
-      #   continue-on-error: true
-
-      # - name: Terrafrom Initialization
-      #   working-directory: modules/services/yandex-cloud
-      #   id: init
-      #   run: |
-      #     terraform init
-
-      # - name: Terraform Validate
-      #   working-directory: modules/services/yandex-cloud
-      #   id: validate
-      #   run: |
-      #     terraform validate
-      
-      # - name: Terraform Plan
-      #   working-directory: modules/services/yandex-cloud
-      #   run: terraform plan
-      #   continue-on-error: true
