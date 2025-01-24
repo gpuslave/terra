@@ -3,7 +3,6 @@ name: Terraform Plan Local
 on:
   push:
     branches:
-      - githubflow
       - main
   pull_request:
     branches:

@@ -1,13 +1,13 @@
 name: Terraform Plan
 
 on:
-  push:
-    branches:
-      - githubflow
-      - main
   pull_request:
     branches:
-      - main
+      - githubflow
+  # push:
+  #   branches:
+  #     - githubflow
+  #     - main
 
 env:
   TF_CLOUD_ORGANIZATION: "gpuslave_org"
