@@ -1,14 +1,14 @@
-# VM-1 Network Details
-output "vm1_internal_ip" {
-  description = "Internal IP of VM-1"
-  value       = yandex_compute_instance.vm-1.network_interface.0.ip_address
-}
+# # VM-1 Network Details
+# output "vm1_internal_ip" {
+#   description = "Internal IP of VM-1"
+#   value       = yandex_compute_instance.vm-1.network_interface.0.ip_address
+# }
 
-# VM-2 Network Details 
-output "vm2_internal_ip" {
-  description = "Internal IP of VM-2"
-  value       = yandex_compute_instance.vm-2.network_interface.0.ip_address
-}
+# # VM-2 Network Details 
+# output "vm2_internal_ip" {
+#   description = "Internal IP of VM-2"
+#   value       = yandex_compute_instance.vm-2.network_interface.0.ip_address
+# }
 
 # Bastion Host Network Details
 output "bastion_public_ip" {

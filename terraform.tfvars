@@ -31,18 +31,45 @@ vm_resources = {
   "vm-1" = {
     cores  = 4
     memory = 4
-    disk = 40
+    disk   = 40
   }
 
   "vm-2" = {
     cores  = 2
     memory = 2
-    disk = 20
+    disk   = 20
   }
 
   "vm-bastion" = {
     cores  = 2
     memory = 2
-    disk = 20
+    disk   = 20
+  }
+}
+
+
+# ---
+
+vm_instances = {
+  "vm-1" = {
+    name   = "vm-1"
+    cores  = 4
+    memory = 4
+    disk   = 40
+    image  = "fd8m5hqeuhbtbhltuab4"
+    # image   = var.images.ubuntu_2404
+    ssh_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAbFxLEDHeHvNBrF8wgxNt2WY5h5YlYpZUVDo4cG3xTu gpuslave@batman.local"
+    # ssh_key = var.ssh_keys.vm-1_key
+  }
+
+  "vm-2" = {
+    name   = "vm-2"
+    cores  = 2
+    memory = 2
+    disk   = 20
+    image  = "fd8m5hqeuhbtbhltuab4"
+    # image   = var.images.ubuntu_2404
+    ssh_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGyMo8XdtYja+2M0oxX5k1879XivBNFQMg23qgh5liLb gpuslave@batman.local"
+    # ssh_key = var.ssh_keys.vm-2_key
   }
 }

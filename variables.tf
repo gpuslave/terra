@@ -51,3 +51,18 @@ variable "vm_resources" {
   description = "CPU, mem, disk settings for each VM instance"
 }
 
+
+# ---
+
+variable "vm_instances" {
+  type = map(object({
+    name    = string
+    cores   = number
+    memory  = number
+    disk    = number
+    image   = string
+    ssh_key = string
+  }))
+  description = "value"
+}
+

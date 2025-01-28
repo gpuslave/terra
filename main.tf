@@ -57,28 +57,31 @@ resource "yandex_vpc_security_group" "internal-bastion-sg" {
 
 # --- BOOT DISKS
 
-resource "yandex_compute_disk" "boot-disk-1" {
-  name     = "boot-disk-1"
-  type     = "network-hdd"
-  zone     = "ru-central1-d"
-  size     = "20"
-  image_id = "fd8m5hqeuhbtbhltuab4"
-}
+# resource "yandex_compute_disk" "boot-disk-1" {
+#   name = "boot-disk-1"
+#   type = "network-hdd"
+#   zone = "ru-central1-d"
+#   size = var.vm_resources["vm-1"].disk
+#   # size     = "20"
+#   image_id = var.images.ubuntu_2404
+# }
 
-resource "yandex_compute_disk" "boot-disk-2" {
-  name     = "boot-disk-2"
-  type     = "network-hdd"
-  zone     = "ru-central1-d"
-  size     = "20"
-  image_id = "fd8m5hqeuhbtbhltuab4"
-}
+# resource "yandex_compute_disk" "boot-disk-2" {
+#   name = "boot-disk-2"
+#   type = "network-hdd"
+#   zone = "ru-central1-d"
+#   size = var.vm_resources["vm-2"].disk
+#   # size     = "20"
+#   image_id = var.images.ubuntu_2404
+# }
 
 resource "yandex_compute_disk" "boot-disk-bastion-1" {
-  name     = "boot-disk-bastion-1"
-  type     = "network-hdd"
-  zone     = "ru-central1-d"
-  size     = "10"
-  image_id = "fd81vhfcdt7ntmco1qeq"
+  name = "boot-disk-bastion-1"
+  type = "network-hdd"
+  zone = "ru-central1-d"
+  size = var.vm_resources["vm-bastion"].disk
+  # size     = "10"
+  image_id = var.images.ubuntu_2204_bastion
 }
 
 # --- SUBNETS
@@ -101,57 +104,67 @@ resource "yandex_vpc_subnet" "bastion-subnet-external" {
 
 # --- VM'S
 
-resource "yandex_compute_instance" "vm-1" {
-  name        = "terraform-1"
-  zone        = "ru-central1-d"
-  platform_id = "standard-v2"
+# resource "yandex_compute_instance" "vm-1" {
+#   name        = "terraform-1"
+#   zone        = "ru-central1-d"
+#   platform_id = "standard-v2"
 
-  resources {
-    cores  = 2
-    memory = 4
-  }
+#   resources {
+#     cores  = var.vm_resources["vm-1"].cores
+#     memory = var.vm_resources["vm-1"].memory
+#   }
 
-  boot_disk {
-    disk_id = yandex_compute_disk.boot-disk-1.id
-  }
+#   # resources {
+#   #   cores  = 2
+#   #   memory = 4
+#   # }
 
-  network_interface {
-    subnet_id          = yandex_vpc_subnet.bastion-subnet-internal.id
-    security_group_ids = [yandex_vpc_security_group.internal-bastion-sg.id]
-    ipv4               = true
-    ip_address         = var.ip_addr.vm-1_ip
-  }
+#   boot_disk {
+#     disk_id = yandex_compute_disk.boot-disk-1.id
+#   }
 
-  metadata = {
-    ssh-keys = "ubuntu:${var.ssh_keys.vm-1_key}"
-  }
-}
+#   network_interface {
+#     subnet_id          = yandex_vpc_subnet.bastion-subnet-internal.id
+#     security_group_ids = [yandex_vpc_security_group.internal-bastion-sg.id]
+#     ipv4               = true
+#     ip_address         = var.ip_addr.vm-1_ip
+#   }
 
-resource "yandex_compute_instance" "vm-2" {
-  name        = "terraform-2"
-  zone        = "ru-central1-d"
-  platform_id = "standard-v2"
+#   metadata = {
+#     ssh-keys = "ubuntu:${var.ssh_keys.vm-1_key}"
+#   }
+# }
 
-  resources {
-    cores  = 2
-    memory = 2
-  }
+# resource "yandex_compute_instance" "vm-2" {
+#   name        = "terraform-2"
+#   zone        = "ru-central1-d"
+#   platform_id = "standard-v2"
 
-  boot_disk {
-    disk_id = yandex_compute_disk.boot-disk-2.id
-  }
+#   resources {
+#     cores  = var.vm_resources["vm-2"].cores
+#     memory = var.vm_resources["vm-2"].memory
+#   }
 
-  network_interface {
-    subnet_id          = yandex_vpc_subnet.bastion-subnet-internal.id
-    security_group_ids = [yandex_vpc_security_group.internal-bastion-sg.id]
-    ipv4               = true
-    ip_address         = var.ip_addr.vm-2_ip
-  }
+#   # resources {
+#   #   cores  = 2
+#   #   memory = 2
+#   # }
 
-  metadata = {
-    ssh-keys = "ubuntu:${var.ssh_keys.vm-2_key}"
-  }
-}
+#   boot_disk {
+#     disk_id = yandex_compute_disk.boot-disk-2.id
+#   }
+
+#   network_interface {
+#     subnet_id          = yandex_vpc_subnet.bastion-subnet-internal.id
+#     security_group_ids = [yandex_vpc_security_group.internal-bastion-sg.id]
+#     ipv4               = true
+#     ip_address         = var.ip_addr.vm-2_ip
+#   }
+
+#   metadata = {
+#     ssh-keys = "ubuntu:${var.ssh_keys.vm-2_key}"
+#   }
+# }
 
 resource "yandex_compute_instance" "vm-bastion" {
   name        = "bastion-1"
@@ -159,9 +172,14 @@ resource "yandex_compute_instance" "vm-bastion" {
   platform_id = "standard-v2"
 
   resources {
-    cores  = 2
-    memory = 2
+    cores  = var.vm_resources["vm-bastion"].cores
+    memory = var.vm_resources["vm-bastion"].memory
   }
+
+  # resources {
+  #   cores  = 2
+  #   memory = 2
+  # }
 
   boot_disk {
     disk_id = yandex_compute_disk.boot-disk-bastion-1.id
