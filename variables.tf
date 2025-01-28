@@ -31,5 +31,23 @@ variable "subnets" {
     internal_sub_cidr = string
     external_sub_cidr = string
   })
+  description = "CIDR's for subnets"
+}
+
+variable "images" {
+  type = object({
+    ubuntu_2404         = string
+    ubuntu_2204_bastion = string
+  })
+  description = "Image id's for VM instances"
+}
+
+variable "vm_resources" {
+  type = map(object({
+    cores  = number
+    memory = number
+    disk   = number
+  }))
+  description = "CPU, mem, disk settings for each VM instance"
 }
 

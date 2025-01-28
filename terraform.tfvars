@@ -21,3 +21,28 @@ ssh_keys = {
   vm-1_key    = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAbFxLEDHeHvNBrF8wgxNt2WY5h5YlYpZUVDo4cG3xTu gpuslave@batman.local"
   vm-2_key    = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGyMo8XdtYja+2M0oxX5k1879XivBNFQMg23qgh5liLb gpuslave@batman.local"
 }
+
+images = {
+  ubuntu_2404         = "fd8m5hqeuhbtbhltuab4"
+  ubuntu_2204_bastion = "fd81vhfcdt7ntmco1qeq"
+}
+
+vm_resources = {
+  "vm-1" = {
+    cores  = 4
+    memory = 4
+    disk = 40
+  }
+
+  "vm-2" = {
+    cores  = 2
+    memory = 2
+    disk = 20
+  }
+
+  "vm-bastion" = {
+    cores  = 2
+    memory = 2
+    disk = 20
+  }
+}
