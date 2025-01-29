@@ -4,6 +4,22 @@ terraform {
       source = "yandex-cloud/yandex"
     }
   }
+
+  backend "s3" {
+    endpoints = {
+      s3 = "https://storage.yandexcloud.net"
+    }
+
+    bucket = "my-new-bucket-gpuslave"
+    region = "ru-central1"
+    key    = "states/terraform.tfstate"
+
+    skip_region_validation      = true
+    skip_credentials_validation = true
+    skip_requesting_account_id  = true # This option is required for Terraform 1.6.1 or higher.
+    skip_s3_checksum            = true # This option is required to describe backend for Terraform version 1.6.3 or higher.
+  }
+
   required_version = ">= 0.13"
 }
 
@@ -55,34 +71,6 @@ resource "yandex_vpc_security_group" "internal-bastion-sg" {
   }
 }
 
-# --- BOOT DISKS
-
-# resource "yandex_compute_disk" "boot-disk-1" {
-#   name = "boot-disk-1"
-#   type = "network-hdd"
-#   zone = "ru-central1-d"
-#   size = var.vm_resources["vm-1"].disk
-#   # size     = "20"
-#   image_id = var.images.ubuntu_2404
-# }
-
-# resource "yandex_compute_disk" "boot-disk-2" {
-#   name = "boot-disk-2"
-#   type = "network-hdd"
-#   zone = "ru-central1-d"
-#   size = var.vm_resources["vm-2"].disk
-#   # size     = "20"
-#   image_id = var.images.ubuntu_2404
-# }
-
-resource "yandex_compute_disk" "boot-disk-bastion-1" {
-  name = "boot-disk-bastion-1"
-  type = "network-hdd"
-  zone = "ru-central1-d"
-  size = var.vm_resources["vm-bastion"].disk
-  # size     = "10"
-  image_id = var.images.ubuntu_2204_bastion
-}
 
 # --- SUBNETS
 
@@ -102,69 +90,20 @@ resource "yandex_vpc_subnet" "bastion-subnet-external" {
   v4_cidr_blocks = [var.subnets.external_sub_cidr]
 }
 
-# --- VM'S
-
-# resource "yandex_compute_instance" "vm-1" {
-#   name        = "terraform-1"
-#   zone        = "ru-central1-d"
-#   platform_id = "standard-v2"
-
-#   resources {
-#     cores  = var.vm_resources["vm-1"].cores
-#     memory = var.vm_resources["vm-1"].memory
-#   }
-
-#   # resources {
-#   #   cores  = 2
-#   #   memory = 4
-#   # }
-
-#   boot_disk {
-#     disk_id = yandex_compute_disk.boot-disk-1.id
-#   }
-
-#   network_interface {
-#     subnet_id          = yandex_vpc_subnet.bastion-subnet-internal.id
-#     security_group_ids = [yandex_vpc_security_group.internal-bastion-sg.id]
-#     ipv4               = true
-#     ip_address         = var.ip_addr.vm-1_ip
-#   }
-
-#   metadata = {
-#     ssh-keys = "ubuntu:${var.ssh_keys.vm-1_key}"
-#   }
+# TODO: configure images as resources
+# resource "yandex_compute_image" "ubuntu_2004" {
+#   source_family = "ubuntu-2004-lts"
 # }
 
-# resource "yandex_compute_instance" "vm-2" {
-#   name        = "terraform-2"
-#   zone        = "ru-central1-d"
-#   platform_id = "standard-v2"
+# --- BASTION
 
-#   resources {
-#     cores  = var.vm_resources["vm-2"].cores
-#     memory = var.vm_resources["vm-2"].memory
-#   }
-
-#   # resources {
-#   #   cores  = 2
-#   #   memory = 2
-#   # }
-
-#   boot_disk {
-#     disk_id = yandex_compute_disk.boot-disk-2.id
-#   }
-
-#   network_interface {
-#     subnet_id          = yandex_vpc_subnet.bastion-subnet-internal.id
-#     security_group_ids = [yandex_vpc_security_group.internal-bastion-sg.id]
-#     ipv4               = true
-#     ip_address         = var.ip_addr.vm-2_ip
-#   }
-
-#   metadata = {
-#     ssh-keys = "ubuntu:${var.ssh_keys.vm-2_key}"
-#   }
-# }
+resource "yandex_compute_disk" "boot-disk-bastion-1" {
+  name     = "boot-disk-bastion-1"
+  type     = "network-hdd"
+  zone     = "ru-central1-d"
+  size     = var.vm_resources["vm-bastion"].disk
+  image_id = var.images.ubuntu_2204_bastion
+}
 
 resource "yandex_compute_instance" "vm-bastion" {
   name        = "bastion-1"
@@ -175,11 +114,6 @@ resource "yandex_compute_instance" "vm-bastion" {
     cores  = var.vm_resources["vm-bastion"].cores
     memory = var.vm_resources["vm-bastion"].memory
   }
-
-  # resources {
-  #   cores  = 2
-  #   memory = 2
-  # }
 
   boot_disk {
     disk_id = yandex_compute_disk.boot-disk-bastion-1.id
