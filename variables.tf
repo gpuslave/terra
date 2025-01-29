@@ -54,15 +54,15 @@ variable "vm_resources" {
 
 # ---
 
-variable "vm_instances" {
-  type = map(object({
-    name    = string
-    cores   = number
-    memory  = number
-    disk    = number
-    image   = string
-    ssh_key = string
-  }))
-  description = "value"
-}
+# variable "vm_instances" {
+#   type = map(object({
+#     name    = string
+#     cores   = number
+#     memory  = number
+#     disk    = number
+#     image   = string
+#     ssh_key = string
+#   }))
+#   description = "value"
+# }
 

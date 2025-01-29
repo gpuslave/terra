@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    yandex = {
+      source  = "yandex-cloud/yandex"
+      version = "0.135.0"
+    }
+  }
+}
+
 resource "yandex_compute_disk" "boot-disk" {
   for_each = var.vm_instances
 
@@ -21,14 +30,13 @@ resource "yandex_compute_instance" "vm" {
 
   boot_disk {
     disk_id = yandex_compute_disk.boot-disk[each.key].id
-    # disk_id = yandex_compute_disk.boot-disk["boot-disk-${each.key}"].id
   }
 
   network_interface {
-    subnet_id          = yandex_vpc_subnet.bastion-subnet-internal.id
-    security_group_ids = [yandex_vpc_security_group.internal-bastion-sg.id]
+    subnet_id          = var.subnet_id
+    security_group_ids = [ var.sg_id ]
     ipv4               = true
-    ip_address         = var.ip_addr["${each.key}_ip"]
+    ip_address         = var.vm_ips["${each.key}_ip"]
   }
 
   metadata = {
