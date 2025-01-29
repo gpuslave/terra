@@ -174,9 +174,4 @@ module "vm-cattle" {
   sg_id     = yandex_vpc_security_group.internal-bastion-sg.id
   subnet_id = yandex_vpc_subnet.bastion-subnet-internal.id
 
-  # yandex_provider = {
-  #   cloud_id  = var.yandex_provider.cloud_id
-  #   folder_id = var.yandex_provider.folder_id
-  #   zone      = var.yandex_provider.zone
-  # }
 }
