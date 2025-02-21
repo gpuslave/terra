@@ -142,7 +142,7 @@ resource "yandex_compute_instance" "vm-bastion" {
 }
 
 module "vm-cattle" {
-  source = "./modules/services/vm-cattle"
+  source = "./modules/vm-cattle"
 
   vm_instances = {
     "vm-1" = {
