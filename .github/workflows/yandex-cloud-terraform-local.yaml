@@ -1,0 +1,54 @@
+name: Terraform Plan Local
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CONFIG_DIRECTORY: "."
+  YC_TOKEN: ${{ secrets.YC_TOKEN }}
+
+jobs:
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.4"
+      
+      - name: Terraform Format
+        id: fmt
+        run: |
+          terraform fmt
+        continue-on-error: true
+
+      - name: Terrafrom Initialization
+        id: init
+        run: |
+          terraform init -backend-config="access_key=${{ secrets.ACCESS_KEY }}" -backend-config="secret_key=${{ secrets.SECRET_KEY }}"
+
+      - name: Terraform Validate
+        id: validate
+        run: |
+          terraform validate
+      
+      - name: Terraform Plan
+        run: |
+          terraform plan -detailed-exitcode
+        continue-on-error: true
+      
+      - name: Terraform Apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          terraform apply -auto-approve
