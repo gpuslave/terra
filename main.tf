@@ -144,25 +144,7 @@ resource "yandex_compute_instance" "vm-bastion" {
 module "vm-cattle" {
   source = "./modules/vm-cattle"
 
-  vm_instances = {
-    "vm-1" = {
-      name    = "vm-1"
-      cores   = 4
-      memory  = 4
-      disk    = 40
-      image   = "fd8m5hqeuhbtbhltuab4"
-      ssh_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPsbB++OKh5w1RyO53KivYhu1fvj3ZoLgYnuiH8c9bbV gpuslave@batman.local"
-    }
-
-    "vm-2" = {
-      name    = "vm-2"
-      cores   = 2
-      memory  = 2
-      disk    = 20
-      image   = "fd8m5hqeuhbtbhltuab4"
-      ssh_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGyMo8XdtYja+2M0oxX5k1879XivBNFQMg23qgh5liLb gpuslave@batman.local"
-    }
-  }
+  vm_instances = var.vm_instances
 
   vm_ips = {
     vm-1_ip = var.ip_addr.vm-1_ip

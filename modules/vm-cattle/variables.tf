@@ -12,8 +12,8 @@ variable "vm_instances" {
 
 variable "vm_ips" {
   type = object({
-    vm-1_ip        = string
-    vm-2_ip        = string
+    vm-1_ip = string
+    vm-2_ip = string
   })
   description = "All of the IP's Used In this Configuration"
 }
@@ -32,5 +32,5 @@ variable "subnet_id" {
 }
 
 variable "sg_id" {
-  type = string 
+  type = string
 }
