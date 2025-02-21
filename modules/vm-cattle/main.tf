@@ -7,6 +7,8 @@ terraform {
   }
 }
 
+# BOOT-DISK
+
 resource "yandex_compute_disk" "boot-disk" {
   for_each = var.vm_instances
 
@@ -16,6 +18,8 @@ resource "yandex_compute_disk" "boot-disk" {
   size     = each.value.disk
   image_id = each.value.image
 }
+
+# VM
 
 resource "yandex_compute_instance" "vm" {
   for_each    = var.vm_instances
@@ -34,7 +38,7 @@ resource "yandex_compute_instance" "vm" {
 
   network_interface {
     subnet_id          = var.subnet_id
-    security_group_ids = [ var.sg_id ]
+    security_group_ids = [var.sg_id]
     ipv4               = true
     ip_address         = var.vm_ips["${each.key}_ip"]
   }
