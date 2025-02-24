@@ -42,9 +42,9 @@ resource "yandex_vpc_network" "external-bastion-network" {
 
 # --- SECURITY GROUPS
 
-resource "yandex_vpc_security_group" "secure-bastion-sg" {
-  name        = "bastion-sec-group"
-  description = "bastion"
+resource "yandex_vpc_security_group" "external-bastion-sg" {
+  name        = "external-bastion-security-group"
+  description = "bastion-ext-sg"
   network_id  = yandex_vpc_network.external-bastion-network.id
 
   ingress {
@@ -52,13 +52,31 @@ resource "yandex_vpc_security_group" "secure-bastion-sg" {
     port           = 22
     v4_cidr_blocks = ["0.0.0.0/0"]
   }
+
+  # ingress {
+  #   protocol = "TCP"
+  #   port = 443
+  # }
+
+  egress {
+    protocol = "TCP"
+    port     = 80
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol = "TCP"
+    port     = 443
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "yandex_vpc_security_group" "internal-bastion-sg" {
-  name        = "bastion-internal-group"
-  description = "bastion"
+  name        = "internal-bastion-security-group"
+  description = "bastion-int-sg"
   network_id  = yandex_vpc_network.internal-bastion-network.id
 
+  # TCP/22
   ingress {
     protocol       = "TCP"
     port           = 22
@@ -66,12 +84,51 @@ resource "yandex_vpc_security_group" "internal-bastion-sg" {
   }
 
   egress {
-    port           = 22
     protocol       = "TCP"
+    port           = 22
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # ICMP
+  ingress {
+    protocol       = "ICMP"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol       = "ICMP"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol = "TCP"
+    port     = 443
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol = "TCP"
+    port     = 80
     v4_cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
+# --- GATEWAY
+resource "yandex_vpc_gateway" "bastion-nat-gateway" {
+  name = "bastion-gateway"
+  shared_egress_gateway {}
+}
+
+# --- ROUTING
+resource "yandex_vpc_route_table" "gateway-rt" {
+  name       = "bastion-gateway-routing-table"
+  network_id = yandex_vpc_network.internal-bastion-network.id
+
+  static_route {
+    destination_prefix = "0.0.0.0/0"
+    gateway_id         = yandex_vpc_gateway.bastion-nat-gateway.id
+  }
+}
 
 # --- SUBNETS
 
@@ -79,6 +136,8 @@ resource "yandex_vpc_subnet" "bastion-subnet-internal" {
   name       = "bastion-internal-segment"
   zone       = "ru-central1-d"
   network_id = yandex_vpc_network.internal-bastion-network.id
+
+  route_table_id = yandex_vpc_route_table.gateway-rt.id
 
   v4_cidr_blocks = [var.subnets.internal_sub_cidr]
 }
@@ -125,7 +184,7 @@ resource "yandex_compute_instance" "vm-bastion" {
     index              = 1
     nat                = true
     nat_ip_address     = var.ip_addr.bastion_ext_ip
-    security_group_ids = [yandex_vpc_security_group.secure-bastion-sg.id]
+    security_group_ids = [yandex_vpc_security_group.external-bastion-sg.id]
   }
 
   network_interface {
@@ -155,5 +214,5 @@ module "vm-cattle" {
 
   sg_id     = yandex_vpc_security_group.internal-bastion-sg.id
   subnet_id = yandex_vpc_subnet.bastion-subnet-internal.id
-
 }
+
