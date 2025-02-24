@@ -15,6 +15,13 @@ variable "ip_addr" {
     bastion_int_ip = string
   })
   description = "All of the IP's Used In this Configuration"
+
+  default = {
+    bastion_ext_ip = "51.250.35.119"
+    bastion_int_ip = "172.16.16.254"
+    vm-1_ip        = "172.16.16.7"
+    vm-2_ip        = "172.16.16.8"
+  }
 }
 
 variable "ssh_keys" {
@@ -24,6 +31,12 @@ variable "ssh_keys" {
     bastion_key = string
   })
   description = "SSH Keys"
+
+  default = {
+    bastion_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCOMEPyVRcix6K9ZcJcQ+Lr5ScVG9/o7bLurlOXt2S4jZuXSgrVwmuor6gjNEJy7hLePMH7i6ObBIYmQdXhPvwvqVgRKoycqmYy7IXvHPNpIwGbDKwiDVrWhgif8P8i3ywDDY27FHBYvzRtT54BcFPaBaUG9iX7qK5Rk0zr4veH63WTRGRjHn972SMfA+pg2ArEyAsKvJ+A9oSuXClayqiCA8sCWHKcyg8kqRfEFWsvzN/MQLk6LZspZYCqJ9s+cwsBmYboLIOd2BiNWBpL/I1TLdBOmcO2f6AqrroYBhJxV7xpHCJh7UnQU/F+85GU/ztL8fQoeuYnu4mfIOfIAHt gpuslave@batman.local"
+    vm-1_key    = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPsbB++OKh5w1RyO53KivYhu1fvj3ZoLgYnuiH8c9bbV gpuslave@batman.local"
+    vm-2_key    = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGyMo8XdtYja+2M0oxX5k1879XivBNFQMg23qgh5liLb gpuslave@batman.local"
+  }
 }
 
 variable "subnets" {
@@ -32,6 +45,11 @@ variable "subnets" {
     external_sub_cidr = string
   })
   description = "CIDR's for subnets"
+
+  default = {
+    external_sub_cidr = "172.16.17.0/28"
+    internal_sub_cidr = "172.16.16.0/24"
+  }
 }
 
 variable "images" {
@@ -40,6 +58,11 @@ variable "images" {
     ubuntu_2204_bastion = string
   })
   description = "Image id's for VM instances"
+
+  default = {
+    ubuntu_2404         = "fd8m5hqeuhbtbhltuab4"
+    ubuntu_2204_bastion = "fd81vhfcdt7ntmco1qeq"
+  }
 }
 
 variable "vm_resources" {
@@ -49,6 +72,27 @@ variable "vm_resources" {
     disk   = number
   }))
   description = "CPU, mem, disk settings for each VM instance"
+
+  default = {
+    # NO LONGER NEEDED
+    # "vm-1" = {
+    #   cores  = 4
+    #   memory = 4
+    #   disk   = 40
+    # }
+
+    # "vm-2" = {
+    #   cores  = 2
+    #   memory = 2
+    #   disk   = 20
+    # }
+
+    "vm-bastion" = {
+      cores  = 2
+      memory = 2
+      disk   = 20
+    }
+  }
 }
 
 variable "vm_instances" {
