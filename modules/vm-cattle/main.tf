@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-# BOOT-DISK
+# --- BOOT DISK
 
 resource "yandex_compute_disk" "boot-disk" {
   for_each = var.vm_instances
@@ -19,7 +19,7 @@ resource "yandex_compute_disk" "boot-disk" {
   image_id = each.value.image
 }
 
-# VM
+# --- VM
 
 resource "yandex_compute_instance" "vm" {
   for_each    = var.vm_instances
