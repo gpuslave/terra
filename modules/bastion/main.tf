@@ -95,6 +95,6 @@ resource "yandex_compute_instance" "vm-bastion" {
   }
 
   metadata = {
-    user-data = "${file("./cloud-init/bastion.yaml")}"
+    user-data = "${file("${path.module}/cloud-init/bastion.yaml")}"
   }
 }

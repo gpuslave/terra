@@ -6,10 +6,6 @@ variable "sg_name" {
   type = string
 }
 
-variable "bastion_internal_ip" {
-  type = string
-}
-
 variable "subnet_name" {
   type = string
 }
@@ -32,6 +28,7 @@ variable "boot_disk" {
     zone     = string
     size     = number
     image_id = string
+    type     = string
   })
 }
 

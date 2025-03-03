@@ -113,22 +113,22 @@ provider "yandex" {
 #   }
 # }
 
-# --- GATEWAY
-resource "yandex_vpc_gateway" "bastion-nat-gateway" {
-  name = "bastion-gateway"
-  shared_egress_gateway {}
-}
+# # --- GATEWAY
+# resource "yandex_vpc_gateway" "bastion-nat-gateway" {
+#   name = "bastion-gateway"
+#   shared_egress_gateway {}
+# }
 
-# --- ROUTING
-resource "yandex_vpc_route_table" "gateway-rt" {
-  name       = "bastion-gateway-routing-table"
-  network_id = yandex_vpc_network.internal-bastion-network.id
+# # --- ROUTING
+# resource "yandex_vpc_route_table" "gateway-rt" {
+#   name       = "bastion-gateway-routing-table"
+#   network_id = yandex_vpc_network.internal-bastion-network.id
 
-  static_route {
-    destination_prefix = "0.0.0.0/0"
-    gateway_id         = yandex_vpc_gateway.bastion-nat-gateway.id
-  }
-}
+#   static_route {
+#     destination_prefix = "0.0.0.0/0"
+#     gateway_id         = yandex_vpc_gateway.bastion-nat-gateway.id
+#   }
+# }
 
 # --- SUBNETS
 
@@ -200,6 +200,68 @@ resource "yandex_vpc_route_table" "gateway-rt" {
 #   }
 # }
 
+module "gateway" {
+  source = "./modules/gateway"
+
+  gateway_name     = "bastion-gateway"
+  route_table_name = "bastion-route-table"
+
+  network_id = module.networking.network_id
+}
+
+module "networking" {
+  source = "./modules/networking"
+
+  network_name = "bastion-internal-network"
+  sg_name      = "bastion-internal-sg"
+  subnet_name  = "bastion-internal-subnet"
+
+  zone = var.yandex_provider.zone
+
+  bastion_internal_ip = var.ip_addr.bastion_int_ip
+
+  subnet_cidr = var.subnets.internal_sub_cidr
+
+  route_table_id = module.gateway.route_table_id
+}
+
+module "bastion" {
+  source = "./modules/bastion"
+
+  network_name = "bastion-external-network"
+  sg_name      = "bastion-extenral-sg"
+  subnet_name  = "bastion-external-subnet"
+
+  zone = var.yandex_provider.zone
+
+  subnet_cidr         = var.subnets.external_sub_cidr
+  bastion_external_ip = var.ip_addr.bastion_ext_ip
+
+  boot_disk = {
+    image_id = var.images.ubuntu_2204_bastion
+    name     = "bastion-boot"
+    zone     = var.yandex_provider.zone
+    size     = 64
+    type     = "network-hdd"
+  }
+
+  bastion = {
+    name        = "bastion-1"
+    zone        = var.yandex_provider.zone
+    platform_id = "standard-v2"
+    resources = {
+      cores  = 2
+      memory = 4
+    }
+  }
+
+  internal_network = {
+    subnet_id           = module.networking.subnet_id
+    bastion_internal_ip = var.ip_addr.bastion_int_ip
+    sg_id               = module.networking.sg_id
+  }
+}
+
 module "vm-cattle" {
   source = "./modules/vms"
 
@@ -212,7 +274,7 @@ module "vm-cattle" {
 
   yandex_provider = var.yandex_provider
 
-  sg_id     = yandex_vpc_security_group.internal-bastion-sg.id
-  subnet_id = yandex_vpc_subnet.bastion-subnet-internal.id
+  sg_id     = module.networking.sg_id
+  subnet_id = module.networking.subnet_id
 }
 

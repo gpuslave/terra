@@ -1,5 +1,5 @@
 variable "gateway_name" {
-  type = string 
+  type = string
 }
 
 variable "route_table_name" {
@@ -7,5 +7,5 @@ variable "route_table_name" {
 }
 
 variable "network_id" {
-  type = string 
+  type = string
 }

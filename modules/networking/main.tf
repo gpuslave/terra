@@ -28,11 +28,11 @@ resource "yandex_vpc_security_group" "internal-sg" {
     v4_cidr_blocks = ["${var.bastion_internal_ip}/32"]
   }
 
-  # egress {
-  #   protocol       = "TCP"
-  #   port           = 22
-  #   v4_cidr_blocks = ["0.0.0.0/0"]
-  # }
+  egress {
+    protocol       = "TCP"
+    port           = 22
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
 
   # ICMP
   ingress {
