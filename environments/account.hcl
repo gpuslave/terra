@@ -38,7 +38,22 @@ locals {
 #   }
 # }
 
-# Make these values available to child configurations
-# inputs = {
-#   yandex_provider = local.yandex_provider
-# }
+remote_state {
+  backend = "s3"
+  config = {
+    endpoint = "https://storage.yandexcloud.net"
+    encrypt        = false
+    bucket         = local.s3_backend.bucket 
+    key            = "terragrunt/terra/${path_relative_to_include()}/tf.tfstate"
+    region         = local.s3_backend.region
+    access_key  = local.s3_backend.access_key
+    secret_key  = local.s3_backend.secret_key
+
+    skip_metadata_api_check     = true
+    skip_credentials_validation    = true
+  }
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+}

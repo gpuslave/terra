@@ -1,6 +1,6 @@
 
 include "root" {
-  path = find_in_parent_folders("root.hcl")
+  path   = find_in_parent_folders("root.hcl")
   expose = true
 }
 
@@ -10,6 +10,14 @@ terraform {
 
 dependency "networking" {
   config_path = "../networking"
+
+  mock_outputs = {
+    # networking_output = "mock"
+    sg_id     = "some-sg-id"
+    subnet_id = "some-subnet-id"
+  }
+
+  # mock_outputs_allowed_terraform_commands = ["plan"]
 }
 
 inputs = {
