@@ -15,15 +15,28 @@ locals {
   # region_vars = read_terragrunt_config(find_in_parent_folders("region.hcl"))
 }
 
+terraform {
+  before_hook "before_init" {
+    commands = ["init"]
+    execute  = [
+      "echo", "Using secure S3 backend configuration"
+    ]
+  }
+
+  extra_arguments "init_args" {
+    commands = ["init"]
+    arguments = [
+      "-backend-config=access_key=${get_env("ACCESS_KEY")}",
+      "-backend-config=secret_key=${get_env("SECRET_KEY")}"
+    ]
+  }
+}
+
 generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite_terragrunt"
   contents  = <<EOF
 provider "yandex" {
-  token = "${local.token}"
-  zone = "${local.zone}"
-  folder_id = "${local.folder_id}"
-  cloud_id = "${local.cloud_id}"
 }
 EOF
 }
@@ -42,8 +55,6 @@ terraform {
     region = "${local.account_vars.locals.s3_backend.region}"
     key    = "terragrunt/terra/${path_relative_to_include()}/tf.tfstate"
 
-    access_key  = "${local.account_vars.locals.s3_backend.access_key}"
-    secret_key  = "${local.account_vars.locals.s3_backend.secret_key}"
 
     skip_region_validation      = true
     skip_credentials_validation = true
@@ -56,3 +67,11 @@ EOF
 
 inputs = merge(local.account_vars.locals,
 local.environment_vars.locals, )
+
+# access_key  = "${local.account_vars.locals.s3_backend.access_key}"
+# secret_key  = "${local.account_vars.locals.s3_backend.secret_key}"
+
+# token = "${local.token}"
+# zone = "${local.zone}"
+# folder_id = "${local.folder_id}"
+# cloud_id = "${local.cloud_id}"
