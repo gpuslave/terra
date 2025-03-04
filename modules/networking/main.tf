@@ -66,7 +66,24 @@ resource "yandex_vpc_subnet" "internal-subnet" {
 
   network_id = yandex_vpc_network.internal-network.id
 
-  route_table_id = var.route_table_id
+  route_table_id = yandex_vpc_route_table.rt-gateway.id
 
   v4_cidr_blocks = [var.subnet_cidr]
+}
+
+resource "yandex_vpc_gateway" "nat-gateway" {
+  name = var.gateway_name
+  # name = "bastion-gateway"
+  shared_egress_gateway {}
+}
+
+resource "yandex_vpc_route_table" "rt-gateway" {
+  name = var.route_table_name
+  # name       = "bastion-gateway-routing-table"
+  network_id = yandex_vpc_network.internal-network.id
+
+  static_route {
+    destination_prefix = "0.0.0.0/0"
+    gateway_id         = yandex_vpc_gateway.nat-gateway.id
+  }
 }
