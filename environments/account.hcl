@@ -38,22 +38,27 @@ locals {
 #   }
 # }
 
-remote_state {
-  backend = "s3"
-  config = {
-    endpoint = "https://storage.yandexcloud.net"
-    encrypt        = false
-    bucket         = local.s3_backend.bucket 
-    key            = "terragrunt/terra/${path_relative_to_include()}/tf.tfstate"
-    region         = local.s3_backend.region
-    access_key  = local.s3_backend.access_key
-    secret_key  = local.s3_backend.secret_key
+# remote_state {
+#   backend = "s3"
+#   config = {
+#     endpoint = "https://storage.yandexcloud.net"
+#     encrypt        = false
+#     bucket         = local.s3_backend.bucket 
+#     key            = "terragrunt/terra/${path_relative_to_include()}/tf.tfstate"
+#     region         = local.s3_backend.region
+#     access_key  = local.s3_backend.access_key
+#     secret_key  = local.s3_backend.secret_key
 
-    skip_metadata_api_check     = true
-    skip_credentials_validation    = true
-  }
-  generate = {
-    path      = "backend.tf"
-    if_exists = "overwrite_terragrunt"
-  }
-}
+#     skip_metadata_api_check     = true
+#     skip_credentials_validation    = true
+#     # skip_metadata_api_check     = true
+#     # skip_credentials_validation = true
+#     skip_region_validation      = true
+#     skip_requesting_account_id  = true
+#     skip_s3_checksum            = true
+#   }
+#   generate = {
+#     path      = "backend.tf"
+#     if_exists = "overwrite_terragrunt"
+#   }
+# }

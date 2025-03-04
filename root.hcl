@@ -28,5 +28,31 @@ provider "yandex" {
 EOF
 }
 
+generate "backend" {
+  path      = "backend.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
+terraform {
+  backend "s3" {
+    endpoints = {
+      s3 = "https://storage.yandexcloud.net"
+    }
+
+    bucket = "${local.account_vars.locals.s3_backend.bucket}"
+    region = "${local.account_vars.locals.s3_backend.region}"
+    key    = "terragrunt/terra/${path_relative_to_include()}/tf.tfstate"
+
+    access_key  = "${local.account_vars.locals.s3_backend.access_key}"
+    secret_key  = "${local.account_vars.locals.s3_backend.secret_key}"
+
+    skip_region_validation      = true
+    skip_credentials_validation = true
+    skip_requesting_account_id  = true # This option is required for Terraform 1.6.1 or higher.
+    skip_s3_checksum            = true # This option is required to describe backend for Terraform version 1.6.3 or higher.
+  }
+}
+EOF
+}
+
 inputs = merge(local.account_vars.locals,
 local.environment_vars.locals, )
